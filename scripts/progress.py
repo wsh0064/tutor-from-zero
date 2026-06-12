@@ -11,7 +11,19 @@ from pathlib import Path
 from typing import Any
 
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
+
+DEFAULT_USER_PREFERENCES = {
+    "onboarding_status": "pending",
+    "teaching_entry": "unknown",
+    "interaction_cadence": "balanced",
+    "guidance_style": "step-by-step",
+    "detail_level": "normal",
+    "visual_density": "core-concept",
+    "formula_style": "rendered",
+    "confirmed_at": None,
+    "notes": "",
+}
 
 
 def _now() -> str:
@@ -53,11 +65,7 @@ def new_progress(
         },
         "chapters": {},
         "wrong_questions": [],
-        "user_preferences": {
-            "learning_style": "unknown",
-            "pace": "normal",
-            "notes": "",
-        },
+        "user_preferences": dict(DEFAULT_USER_PREFERENCES),
         "last_session": {
             "summary": "",
             "next_action": "",
@@ -86,14 +94,83 @@ def validate_progress(data: dict[str, Any]) -> list[str]:
         errors.append("chapters 必须是对象")
     if not isinstance(data.get("wrong_questions"), list):
         errors.append("wrong_questions 必须是数组")
+    preferences = data.get("user_preferences")
+    if not isinstance(preferences, dict):
+        errors.append("user_preferences 必须是对象")
+    elif preferences.get("onboarding_status") not in {"pending", "complete"}:
+        errors.append("user_preferences.onboarding_status 必须是 pending 或 complete")
     return errors
+
+
+def migrate_progress(data: dict[str, Any]) -> tuple[dict[str, Any], bool]:
+    """Upgrade older progress records without discarding unknown fields."""
+    migrated = dict(data)
+    changed = migrated.get("schema_version") != SCHEMA_VERSION
+    preferences = migrated.get("user_preferences")
+    if not isinstance(preferences, dict):
+        preferences = {}
+        changed = True
+    else:
+        preferences = dict(preferences)
+
+    legacy_style = preferences.get("learning_style")
+    legacy_pace = preferences.get("pace")
+    for key, value in DEFAULT_USER_PREFERENCES.items():
+        if key not in preferences:
+            preferences[key] = value
+            changed = True
+    if legacy_style and preferences["teaching_entry"] == "unknown":
+        mapping = {
+            "example-oriented": "example-first",
+            "system-oriented": "map-first",
+            "analogy-oriented": "intuition-first",
+        }
+        preferences["teaching_entry"] = mapping.get(legacy_style, "unknown")
+        changed = True
+    if legacy_pace and preferences["detail_level"] == "normal":
+        preferences["detail_level"] = legacy_pace
+        changed = True
+
+    migrated["user_preferences"] = preferences
+    migrated["schema_version"] = SCHEMA_VERSION
+    return migrated, changed
+
+
+def update_preferences(
+    data: dict[str, Any],
+    *,
+    teaching_entry: str | None = None,
+    interaction_cadence: str | None = None,
+    guidance_style: str | None = None,
+    detail_level: str | None = None,
+    visual_density: str | None = None,
+    confirmed: bool = False,
+) -> dict[str, Any]:
+    """Return a progress record with explicit, user-approved preference changes."""
+    updated, _ = migrate_progress(data)
+    updated = dict(updated)
+    preferences = dict(updated["user_preferences"])
+    values = {
+        "teaching_entry": teaching_entry,
+        "interaction_cadence": interaction_cadence,
+        "guidance_style": guidance_style,
+        "detail_level": detail_level,
+        "visual_density": visual_density,
+    }
+    for key, value in values.items():
+        if value is not None:
+            preferences[key] = value
+    if confirmed:
+        preferences["onboarding_status"] = "complete"
+        preferences["confirmed_at"] = _now()
+    updated["user_preferences"] = preferences
+    return updated
 
 
 def save_progress(course_dir: str | Path, data: dict[str, Any]) -> Path:
     path = progress_path(course_dir)
     path.parent.mkdir(parents=True, exist_ok=True)
-    data = dict(data)
-    data["schema_version"] = SCHEMA_VERSION
+    data, _ = migrate_progress(data)
     data["updated_at"] = _now()
     data["mode"] = choose_mode(data.get("exam_date"))
     errors = validate_progress(data)
@@ -137,7 +214,10 @@ def load_progress(
         if not backup.exists():
             raise
         data = json.loads(backup.read_text(encoding="utf-8"))
+    data, changed = migrate_progress(data)
     errors = validate_progress(data)
     if errors:
         raise ValueError("; ".join(errors))
+    if changed:
+        save_progress(course_dir, data)
     return data

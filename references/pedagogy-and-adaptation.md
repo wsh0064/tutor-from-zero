@@ -1,8 +1,13 @@
 # Pedagogy And Adaptation
 
-## Six-Part Explanation Protocol
+## Visual-First Explanation Protocol
 
-### 1. Intuition
+Start each core concept with a useful visual selected according to
+`visual-and-formula-style.md`. The visual may be a source question image, diagram, graph,
+table, timeline, or rendered knowledge map. Skip it only when it would add no learning
+value, and say why.
+
+### 1. Visual And Intuition
 
 Explain what the concept does before naming formal machinery. Use a familiar situation,
 small numerical example, diagram, or counterexample. The analogy is a bridge, not the
@@ -86,6 +91,8 @@ Treat preferences as provisional observations:
 - visual-oriented: use tables, diagrams, spatial layouts, or timelines.
 
 Do not label a student permanently or remove essential practice because of a preference.
+Treat saved preferences as user-confirmed defaults. Suggest a change when observed
+performance supports it, explain the evidence, and wait for consent before saving it.
 
 ## Tone
 

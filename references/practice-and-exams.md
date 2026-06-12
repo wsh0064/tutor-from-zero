@@ -24,15 +24,17 @@ limits, marks, and a scoring rubric.
 
 For each teaching problem:
 
-1. Present the question without immediately exposing the solution.
-2. Ask the student to restate the target.
-3. Extract conditions, constraints, and signal words.
-4. Ask for a method and the reason it applies.
-5. Guide execution one decision at a time.
-6. Check the result using units, bounds, substitution, counterexample, or argument
+1. Search `.tutor/visual_catalog.json` and prefer a useful visual question when available.
+2. Present the question without immediately exposing the solution.
+3. Ask the student to restate the target.
+4. Extract conditions, constraints, and signal words.
+5. Ask for a method and the reason it applies.
+6. Guide execution one decision at a time.
+7. Check the result using units, bounds, substitution, counterexample, or argument
    consistency.
-7. Name the reusable problem type and method.
-8. Change one condition and ask for a variation.
+8. Name the reusable problem type and method.
+9. Change one condition and ask for a variation, adapting and labeling the visual when
+   that improves the question.
 
 ## Wrong-Question Records
 

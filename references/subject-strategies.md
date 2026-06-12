@@ -4,6 +4,7 @@
 
 - Build prerequisite chains explicitly.
 - Explain definitions geometrically or numerically before symbolism.
+- Plot functions, regions, distributions, and parameter changes when they carry meaning.
 - State theorem and formula conditions every time they are applied.
 - Show derivation decisions, not just algebra.
 - Use estimation, units, substitution, or limiting cases to check answers.
@@ -11,6 +12,7 @@
 ## Physics And Engineering
 
 - Begin with the real system, assumptions, variables, and sign convention.
+- Use labeled system, free-body, circuit, field, or process diagrams before equations.
 - Separate physical law, model simplification, and calculation.
 - Track units throughout.
 - Highlight standards or procedural steps whose violation loses substantial marks.
@@ -19,6 +21,7 @@
 ## Computer Science
 
 - Trace small inputs by hand before generalizing.
+- Use state, memory, recursion, control-flow, or dependency diagrams for core processes.
 - Separate interface, invariant, algorithm, and complexity.
 - Explain why an implementation is correct and under which assumptions.
 - Use code only after the concept is visible; include edge cases and complexity.
@@ -28,6 +31,7 @@
 - Replace formula derivation with claim, evidence, context, counterargument, and
   qualification.
 - Build timelines, causal chains, and concept comparisons.
+- Render those timelines and causal maps as visible diagrams in artifacts.
 - Teach answer structure explicitly: thesis, organized evidence, analysis, conclusion.
 - Distinguish primary evidence, scholarly interpretation, and the student's synthesis.
 

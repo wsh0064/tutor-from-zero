@@ -7,7 +7,7 @@ rendered outputs are replaceable.
 
 ```json
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "course_name": "数据结构",
   "started_at": "2026-06-07",
   "updated_at": "2026-06-07T12:00:00+00:00",
@@ -21,8 +21,14 @@ rendered outputs are replaceable.
   "chapters": {},
   "wrong_questions": [],
   "user_preferences": {
-    "learning_style": "example-oriented",
-    "pace": "normal",
+    "onboarding_status": "complete",
+    "teaching_entry": "example-first",
+    "interaction_cadence": "balanced",
+    "guidance_style": "step-by-step",
+    "detail_level": "normal",
+    "visual_density": "core-concept",
+    "formula_style": "rendered",
+    "confirmed_at": "2026-06-07T12:00:00+00:00",
     "notes": ""
   },
   "last_session": {
@@ -31,6 +37,19 @@ rendered outputs are replaceable.
   }
 }
 ```
+
+Valid preference values:
+
+- `onboarding_status`: `pending` or `complete`;
+- `teaching_entry`: `unknown`, `example-first`, `map-first`, or `intuition-first`;
+- `interaction_cadence`: `frequent-checks`, `balanced`, or `complete-chunk`;
+- `guidance_style`: `step-by-step`, `independent-first`, or `demonstrate-then-vary`;
+- `detail_level`: `concise`, `normal`, or `detailed`;
+- `visual_density`: `essential`, `core-concept`, or `visual-rich`;
+- `formula_style`: `rendered`.
+
+The first three choices are required for onboarding. Change later preferences only after
+the user confirms the proposed adjustment.
 
 ## Chapter Record
 
@@ -73,6 +92,7 @@ because a guide was generated.
 ## Writing Rules
 
 - Load before changing; preserve unknown fields for forward compatibility.
+- Automatically migrate schema v1 records to v2, retaining legacy and unknown fields.
 - Use `scripts/progress.py` for atomic writes and backup creation.
 - Update only after observed learning activity.
 - Recompute mode from `exam_date`.

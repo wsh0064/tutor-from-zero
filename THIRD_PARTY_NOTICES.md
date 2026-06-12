@@ -69,3 +69,9 @@ informed the design.
 
 OCR integration targets Tesseract OCR and pytesseract, both available under Apache License
 2.0. Tesseract and its language data are external system dependencies and are not bundled.
+
+## KaTeX
+
+KaTeX 0.16.22 is bundled under `assets/vendor/katex` for offline mathematical typesetting.
+KaTeX is licensed under the MIT License. Its distribution includes the upstream license
+and font notices.

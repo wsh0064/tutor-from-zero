@@ -1,6 +1,6 @@
 ---
 name: tutor-from-zero
-description: 从零基础到通过考试的交互式课程导师与复习资料生成器。用户提到学习、复习、备考、期末、考前冲刺、不会做题、整理课件、分析 PPT/PDF/Word、生成讲义题库模拟卷，或希望有人一步步教懂一门课时，使用本 Skill。支持课程材料提取、扫描件 OCR、材料可信度分析、分级练习、错题跟踪、复习计划、紧急模式和离线 HTML 复习站点。
+description: 从零基础到通过考试的多模态交互式课程导师与复习资料生成器。用户提到学习、复习、备考、期末、考前冲刺、不会做题、整理课件、分析 PPT/PDF/Word/图片、生成图文讲义题库模拟卷，或希望有人一步步教懂一门课时，使用本 Skill。支持课程偏好建档、材料提取与识图、扫描件 OCR、图题和知识图谱、规范数学公式、分级练习、错题跟踪、复习计划、紧急模式和离线 HTML 复习站点。
 license: CC-BY-NC-4.0; see LICENSE and THIRD_PARTY_NOTICES.md
 metadata:
   version: "1.0.0"
@@ -21,20 +21,24 @@ optional and is used only for public-source research.
 ## Start Here
 
 1. Inspect information already supplied. Do not ask again for facts already present.
-2. Establish the course, exam date, available daily time, exam scope or format, current
+2. Load or create `.tutor/progress.json`. If preference onboarding is pending, ask exactly
+   three short choices: teaching entry, interaction cadence, and guidance style. Save the
+   answers immediately with `scripts/tutor.py preferences ... --confirm`.
+3. Establish the course, exam date, available daily time, exam scope or format, current
    level, and available materials. Ask these progressively rather than as one questionnaire.
-3. If files are available, run diagnostics and extraction:
+4. If files are available, run diagnostics and extraction:
 
    ```bash
    python scripts/tutor.py doctor
    python scripts/tutor.py extract "<course-directory>" --exam-date YYYY-MM-DD
    ```
 
-4. Read `.tutor/manifest.json`, `.tutor/extraction_bundle.json`, and
-   `.tutor/progress.json`. Start with the highest-signal sources.
-5. State what is known from local evidence, what came from public research, and what is
+5. Read `.tutor/manifest.json`, `.tutor/extraction_bundle.json`,
+   `.tutor/visual_catalog.json`, and `.tutor/progress.json`. Start with the highest-signal
+   sources and inspect useful visuals directly when vision is available.
+6. State what is known from local evidence, what came from public research, and what is
    an inference. Never present a guess as a teacher's confirmed preference.
-6. Give a concrete plan, then begin the smallest useful teaching step.
+7. Give a concrete plan, then begin the smallest useful teaching step.
 
 ## Choose The Mode
 
@@ -51,13 +55,15 @@ The CLI records this as `emergency`, `compressed`, or `full`.
 
 For each important concept:
 
-1. Establish intuition with a concrete situation.
-2. Give the precise definition and explain terminology.
-3. Break the logic into understandable steps.
-4. Show the derivation for quantitative subjects, or evidence and argument structure
+1. Start with one useful visual: a source image, adapted diagram, generated teaching
+   diagram, table, timeline, or rendered knowledge map.
+2. Establish intuition with a concrete situation.
+3. Give the precise definition and explain terminology.
+4. Break the logic into understandable steps.
+5. Show the derivation for quantitative subjects, or evidence and argument structure
    for qualitative subjects.
-5. Work one representative example while exposing the reasoning.
-6. Contrast common misconceptions and exam traps.
+6. Work one representative visual or textual example while exposing the reasoning.
+7. Contrast common misconceptions and exam traps.
 
 Pause after a manageable chunk. Ask the student to explain it in their own words or solve
 a small check. When an answer is wrong, identify the correct part of their reasoning,
@@ -65,7 +71,9 @@ offer one useful hint, and let them try again before revealing the solution.
 
 Read [pedagogy-and-adaptation.md](references/pedagogy-and-adaptation.md) before detailed
 teaching. Read [subject-strategies.md](references/subject-strategies.md) when adapting to
-a specific discipline.
+a specific discipline. Read
+[visual-and-formula-style.md](references/visual-and-formula-style.md) before writing
+formulas, selecting images, creating visual questions, or building knowledge maps.
 
 ## Practice And Exam Preparation
 
@@ -91,6 +99,7 @@ Update it after meaningful teaching or practice sessions. Preserve:
 - weak concepts and exercise level;
 - wrong questions and error causes;
 - learning preference and pace;
+- onboarding completion and confirmed interaction choices;
 - session summary and next action.
 
 Read [progress-schema.md](references/progress-schema.md) before editing the state file.
@@ -112,6 +121,10 @@ Render existing Markdown outputs with:
 python scripts/tutor.py render "<course-directory>"
 python scripts/tutor.py validate "<course-directory>"
 ```
+
+Use `\(...\)` for inline mathematics and `\[...\]` for display mathematics. Write each
+formula once. Never put ordinary formulas in code fences or repeat them as plain text.
+The renderer uses bundled KaTeX assets and works offline.
 
 Read [teaching-workflow.md](references/teaching-workflow.md) for the end-to-end sequence.
 

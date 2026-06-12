@@ -10,7 +10,7 @@ from pathlib import Path
 from doctor import format_report, run_doctor
 from extract_materials import build_bundle
 from ocr import DEFAULT_LANGUAGES
-from progress import load_progress, progress_path, validate_progress
+from progress import load_progress, save_progress, update_preferences, validate_progress
 from render_outputs import render_course
 
 
@@ -56,6 +56,22 @@ def command_render(args: argparse.Namespace) -> int:
     return 0
 
 
+def command_preferences(args: argparse.Namespace) -> int:
+    progress = load_progress(args.course_dir, create=True)
+    progress = update_preferences(
+        progress,
+        teaching_entry=args.teaching_entry,
+        interaction_cadence=args.interaction_cadence,
+        guidance_style=args.guidance_style,
+        detail_level=args.detail_level,
+        visual_density=args.visual_density,
+        confirmed=args.confirm,
+    )
+    save_progress(args.course_dir, progress)
+    print(json.dumps(progress["user_preferences"], ensure_ascii=False, indent=2))
+    return 0
+
+
 def command_validate(args: argparse.Namespace) -> int:
     errors = []
     try:
@@ -71,6 +87,9 @@ def command_validate(args: argparse.Namespace) -> int:
             manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
             if manifest.get("failed_files"):
                 errors.append(f"有 {manifest['failed_files']} 个材料提取失败")
+            visual_catalog = Path(args.course_dir) / ".tutor" / "visual_catalog.json"
+            if not visual_catalog.exists():
+                errors.append("缺少 .tutor/visual_catalog.json，请重新运行 extract")
         except Exception as exc:
             errors.append(f"manifest.json: {exc}")
     if errors:
@@ -103,6 +122,31 @@ def build_parser() -> argparse.ArgumentParser:
     status_parser.add_argument("course_dir", type=_course_dir)
     status_parser.add_argument("--create", action="store_true")
     status_parser.set_defaults(handler=command_status)
+
+    preferences_parser = subparsers.add_parser(
+        "preferences", help="保存用户明确确认的课程交互偏好"
+    )
+    preferences_parser.add_argument("course_dir", type=_course_dir)
+    preferences_parser.add_argument(
+        "--teaching-entry",
+        choices=("example-first", "map-first", "intuition-first"),
+    )
+    preferences_parser.add_argument(
+        "--interaction-cadence",
+        choices=("frequent-checks", "balanced", "complete-chunk"),
+    )
+    preferences_parser.add_argument(
+        "--guidance-style",
+        choices=("step-by-step", "independent-first", "demonstrate-then-vary"),
+    )
+    preferences_parser.add_argument(
+        "--detail-level", choices=("concise", "normal", "detailed")
+    )
+    preferences_parser.add_argument(
+        "--visual-density", choices=("essential", "core-concept", "visual-rich")
+    )
+    preferences_parser.add_argument("--confirm", action="store_true")
+    preferences_parser.set_defaults(handler=command_preferences)
 
     render_parser = subparsers.add_parser("render", help="渲染离线复习 HTML")
     render_parser.add_argument("course_dir", type=_course_dir)

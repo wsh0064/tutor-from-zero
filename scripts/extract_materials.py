@@ -16,6 +16,7 @@ from extract_pptx import build_text_summary as pptx_summary
 from extract_pptx import extract_pptx
 from image_extractor import IMAGE_EXTENSIONS, extract_image_text
 from ocr import DEFAULT_LANGUAGES
+from visual_catalog import build_visual_catalog
 
 
 SUPPORTED_EXTENSIONS = {".pdf", ".pptx", ".docx"} | IMAGE_EXTENSIONS
@@ -115,6 +116,11 @@ def build_bundle(
                 raise
         records.append(record)
 
+    visual_catalog = build_visual_catalog(
+        root,
+        discover_files(root),
+        languages=languages,
+    )
     generated_at = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
     manifest = {
         "schema_version": 1,
@@ -124,12 +130,14 @@ def build_bundle(
         "file_count": len(records),
         "successful_files": sum(item["status"] == "ok" for item in records),
         "failed_files": sum(item["status"] == "error" for item in records),
+        "visual_count": len(visual_catalog["visuals"]),
         "files": records,
     }
     bundle = {
         "schema_version": 1,
         "generated_at": generated_at,
         "manifest": manifest,
+        "visual_catalog_path": ".tutor/visual_catalog.json",
         "merged_text": "".join(merged_parts).strip(),
     }
     tutor_dir.mkdir(exist_ok=True)

@@ -26,6 +26,10 @@ def test_required_structure_exists() -> None:
         "references/materials-and-confidence.md",
         "references/progress-schema.md",
         "references/subject-strategies.md",
+        "references/visual-and-formula-style.md",
+        "assets/vendor/katex/katex.min.css",
+        "assets/vendor/katex/katex.min.js",
+        "assets/vendor/katex/contrib/auto-render.min.js",
     ]
     missing = [item for item in required if not (ROOT / item).exists()]
     assert not missing

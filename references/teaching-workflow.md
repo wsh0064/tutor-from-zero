@@ -2,14 +2,25 @@
 
 ## Contents
 
-1. Intake and diagnosis
+1. Preference onboarding, intake, and diagnosis
 2. Material preparation
 3. Teaching cycle
 4. Review and simulation
 5. Session continuity
 6. Emergency workflow
 
-## 1. Intake And Diagnosis
+## 1. Preference Onboarding, Intake, And Diagnosis
+
+Load progress before asking course questions. If `user_preferences.onboarding_status` is
+`pending`, ask three concise choices:
+
+- teaching entry: example first, whole-map first, or intuition first;
+- interaction cadence: frequent short checks, balanced, or complete a chunk before practice;
+- guidance style: step-by-step hints, independent attempt first, or demonstrate then vary.
+
+Save the answers immediately and mark onboarding complete. Do not repeat this intake in
+later sessions. After observing a small learning segment, suggest changes to detail level,
+pace, or visual density only with evidence and update them only after user confirmation.
 
 Collect only missing information, preferably one decision at a time:
 
@@ -43,7 +54,7 @@ Inspect extraction failures instead of assuming the bundle is complete. Review t
 manifest by descending `signal_strength`. Detect missing chapters, unreadable scans,
 duplicated files, and conflicts between sources.
 
-Before teaching, build a compact internal course map:
+Before teaching, inspect `.tutor/visual_catalog.json` and build a compact internal course map:
 
 - prerequisites;
 - chapter and concept dependencies;
@@ -57,13 +68,14 @@ For each chapter:
 
 1. Give a one-minute orientation: the chapter's central question, why it matters, and what
    the student will be able to do.
-2. Teach one small concept group using the six-part explanation protocol.
-3. Ask for retrieval or explanation rather than asking only "Do you understand?"
-4. Correct misconceptions with hints and a second attempt.
-5. Complete L1 practice; require roughly 80% success before increasing complexity.
-6. Complete at least one L2 problem for important chapters.
-7. Ask the student to summarize three or four core ideas in their own words.
-8. Update progress and wrong-question records.
+2. Show the chapter dependency map, current position, or another useful visual anchor.
+3. Teach one small concept group using the visual-first explanation protocol.
+4. Ask for retrieval or explanation rather than asking only "Do you understand?"
+5. Correct misconceptions with hints and a second attempt.
+6. Complete L1 practice; require roughly 80% success before increasing complexity.
+7. Complete at least one L2 problem for important chapters.
+8. Ask the student to summarize three or four core ideas in their own words.
+9. Update progress and wrong-question records.
 
 Avoid dumping an entire generated guide into chat when the student needs interaction.
 Write long-form artifacts to `outputs/` and keep the conversation paced.
